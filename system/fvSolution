@@ -1,0 +1,107 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.3.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solvers
+{
+    "(p|Phi)"
+    {
+        solver          GAMG;
+        tolerance       1e-06;
+        relTol          0.05;
+        smoother        GaussSeidel;
+        nPreSweeps      0;
+        nPostSweeps     2;
+        nFinestSweeps   2;
+        cacheAgglomeration on;
+        nCellsInCoarsestLevel 40;
+        mergeLevels     1;
+    }
+    
+    pFinal
+    {
+        solver          PCG;
+        preconditioner
+        {
+            preconditioner  GAMG;
+            tolerance       1e-06;
+            relTol          0;
+            nVcycles        2;
+            smoother        GaussSeidel;
+            nPreSweeps      0;
+            nPostSweeps     2;
+            nFinestSweeps   2;
+            cacheAgglomeration on;
+            nCellsInCoarsestLevel 40;
+            mergeLevels     1;
+        }
+        tolerance       1e-06;
+        relTol          0;
+        maxIter         20;
+    }
+
+    "(U|k|omega|epsilon)"
+    {
+        solver          PBiCGStab;
+        preconditioner  DILU;
+        tolerance       1e-5;
+    }
+    
+    "(UFinal|kFinal|omegaFinal|epsilonFinal|nuTildaFinal)"
+    {
+        solver          PBiCGStab;
+        preconditioner  DILU;
+        tolerance       1e-5;
+    }
+
+}
+
+PIMPLE
+{
+    momentumPredictor   true;
+    nOuterCorrectors    30;
+    nCorrectors         2;
+    nNonOrthogonalCorrectors 2;
+    pRefCell  0;
+    pRefValue 0;
+    
+    outerCorrectorResidualControl
+    {
+        p
+        {
+            tolerance   1e-04;
+            relTol      0;
+        }
+    }
+}
+
+relaxationFactors
+{
+    fields
+    {
+        p           0.2;
+        pFinal      1;
+        U           0.2;
+        k           0.2;
+        omega       0.2;
+    }
+    equations
+    {
+        ".*" 0.97;
+    }
+}
+
+// ************************************************************************* //
