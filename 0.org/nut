@@ -28,8 +28,7 @@ boundaryField
     }
     SlipBC
     {
-        type		    nutUWallFunction;
-        value		    uniform 0;
+        type		   zeroGradient;
     }
     outlet
     {
