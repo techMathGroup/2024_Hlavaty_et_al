@@ -34,8 +34,7 @@ boundaryField
     }  
     SlipBC 
     {
-        type            omegaWallFunction;
-        value           uniform 1000;
+        type            zeroGradient;
     }
     walls
     {
