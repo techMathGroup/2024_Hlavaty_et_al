@@ -32,8 +32,7 @@ boundaryField
     }
     SlipBC 
     {
-        type            kLowReWallFunction;
-        value           uniform 0;
+        type            zeroGradient;
     }
     walls
     {
